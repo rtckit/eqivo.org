@@ -632,9 +632,9 @@ docker run rtckit/eqivo
 <p>Container deployment is the recommended method for integrating Eqivo in your applications; ready-made OCI images are available on <a href="https://hub.docker.com/r/rtckit/eqivo">DockerHub</a>. Configuration via environment variables is ideal for this approach, and orchestration systems such as Kubernetes can transparently handle secret management on your behalf.</p>
 
 <p>For every release, there are two images available, the production one (using version tags) which contains only Eqivo and the PHP runtime and its dependencies. There is also a debug image (tagged with the <code>-full</code> suffix) which includes a complete Debian userland to facilitate troubleshooting.</p>
-<h3 id='phar-package'>Phar Package</h3><div class="highlight"><pre class="highlight sh tab-shell"><code>curl <span class="nt">-Ls</span> https://github.com/rtckit/eqivo/releases/download/latest/eqivo.phar
-<span class="nb">chmod</span> +x eqivo.phar
-<span class="nb">sudo mv </span>eqivo.phar /usr/local/bin/eqivo
+<h3 id='phar-package'>Phar Package</h3><div class="highlight"><pre class="highlight sh tab-shell"><code>curl <span class="nt">-Ls</span> https://github.com/rtckit/eqivo/releases/download/v0.5.0/eqivo.phar <span class="nt">-o</span> eqivo
+<span class="nb">chmod</span> +x eqivo
+<span class="nb">sudo mv </span>eqivo /usr/local/bin
 eqivo
 </code></pre></div>
 <p>The project is also available as a standalone <a href="https://github.com/rtckit/eqivo/releases">Phar package</a>, in which case the environment must be properly configured, i.e.: PHP 8.1+ as well as <a href="https://github.com/rtckit/eqivo/blob/main/composer.json#L27-L33">required extensions</a> (typically bundled with the PHP core).</p>
