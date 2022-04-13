@@ -8,15 +8,25 @@
     <link rel="icon" href="images/favicon-e02bdd24.png">
         <meta
             name="description"
-            content="Open Source Telephony/Real Time Communications API platform build on top of FreeSWITCH"
+            content="Open Source Telephony/Programmable Voice API platform built on top of FreeSWITCH"
         >
         <meta
             name="keywords"
-            content="eqivo, telephony api, rtc api, freeswitch api"
+            content="eqivo, telephony api, programmable voice, freeswitch api"
         >
     <title>Eqivo | Open Source Telephony API Platform</title>
+    <script>
+        window.goatcounter = {no_onload: true};
+
+        window.addEventListener('hashchange', function(e) {
+            window.goatcounter.count({
+                path: location.pathname + location.search + location.hash,
+            })
+        });
+    </script>
     <script data-goatcounter="https://eqivo.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
     <script defer src="https://use.fontawesome.com/releases/v6.1.1/js/all.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css">
 
     <style media="screen">
       .highlight table td { padding: 5px; }
@@ -293,7 +303,7 @@
   color: #859900;
 }
     </style>
-    <link href="stylesheets/screen-1a2e0911.css" rel="stylesheet" media="screen" />
+    <link href="stylesheets/screen-997d5047.css" rel="stylesheet" media="screen" />
     <link href="stylesheets/print-953e3353.css" rel="stylesheet" media="print" />
       <script src="javascripts/all_nosearch-18c3ed8e.js"></script>
 
@@ -588,8 +598,8 @@
           </li>
       </ul>
         <ul class="toc-footer">
-            <li><a href='https://github.com/rtckit/eqivo'><i class='fab fa-github'></i> Source code on GitHub</a></li>
-            <li><a href='https://hub.docker.com/r/rtckit/eqivo'><i class='fab fa-docker'></i> OCI image on DockerHub</a></li>
+            <li><a href='https://github.com/rtckit/eqivo' data-goatcounter-click='ext-github-menu'><i class='fab fa-github'></i> Source code on GitHub</a></li>
+            <li><a href='https://hub.docker.com/r/rtckit/eqivo' data-goatcounter-click='ext-dockerhub-menu'><i class='fab fa-docker'></i> OCI image on DockerHub</a></li>
         </ul>
     </div>
     <div class="page-wrapper">
@@ -601,7 +611,7 @@
 <blockquote>
 <p><strong>Eqivo</strong> started as a tribute project/reimplementation of the discontinued <a href="https://github.com/plivo/plivoframework">Plivo Framework</a>, not to be confused with the cloud offering by the <a href="https://plivo.com">same company</a>; there is no affiliation between the latter company and the Eqivo developers. For clarity, the original (now discontinued) project shall be referred to as the <strong><em>legacy framework</em></strong>.</p>
 
-<p>To learn more about it, the Wayback Machine archived the project&#39;s <a href="https://web.archive.org/web/20171022083017/http://www.plivo.com/open-source/">mission statement</a> and its <a href="https://web.archive.org/web/20171127130133/http://docs.plivo.org/">documentation</a>.</p>
+<p>To learn more about it, read the project&#39;s <a href="https://web.archive.org/web/20171022083017/http://www.plivo.com/open-source/">mission statement</a> and its <a href="https://web.archive.org/web/20171127130133/http://docs.plivo.org/">documentation</a>, as archived by the Wayback Machine circa 2017.</p>
 </blockquote>
 
 <p>It relies on <a href="https://github.com/signalwire/freeswitch">FreeSWITCH</a> for signalling (SIP, Verto, etc.) and media (RTP) handling. Eqivo sits between FreeSWITCH and your application and interacts with the latter by accepting inbound API calls as well as issuing outgoing webhook calls to your designated endpoints.</p>
@@ -9132,5 +9142,6 @@ basicAuth
           </div>
       </div>
     </div>
+    <a class="github-fork-ribbon" href="https://github.com/rtckit/eqivo" data-ribbon="Source code on GitHub" data-goatcounter-click="ext-github-badge" title="Source code on GitHub">Source code on GitHub</a>
   </body>
 </html>
