@@ -600,6 +600,7 @@
         <ul class="toc-footer">
             <li><a href='https://github.com/rtckit/eqivo' data-goatcounter-click='ext-github-menu'><i class='fab fa-github'></i> Source code on GitHub</a></li>
             <li><a href='https://hub.docker.com/r/rtckit/eqivo' data-goatcounter-click='ext-dockerhub-menu'><i class='fab fa-docker'></i> OCI image on DockerHub</a></li>
+            <li><a href='https://github.com/rtckit/eqivo-sandbox' data-goatcounter-click='ext-github-menu'><i class='fab fa-github'></i> Common scenario examples</a></li>
         </ul>
     </div>
     <div class="page-wrapper">
@@ -665,6 +666,8 @@ eqivo
 <p>Eqivo forwards various events by invoking webhooks managed by your application. These are either predefined (such as <a href="#defaultanswerurl">defaultAnswerUrl</a>, <a href="#defaulthangupurl">defaultHangupUrl</a>, <a href="#recordurl">recordUrl</a> or <a href="#callheartbeaturl">callHeartbeatUrl</a>) or set dynamically as API request parameters. The network/firewall settings <em>must</em> ensure Eqivo is able to access the configured webhooks.</p>
 
 <p>For the reverse control flow, Eqivo exposes a service (referred to as the REST server) which intakes API requests from your application. <a href="#restserverbindip">restServerBindIp</a> and <a href="#restserverbindport">restServerBindPort</a> are defining the socket address pair where Eqivo is listening at and the network/firewall settings <em>must</em> ensure your application is allowed access to it.</p>
+
+<p>Several common scenarios and a sample Docker Compose configuration are available in the <a href="https://github.com/rtckit/eqivo-sandbox">rtckit/eqivo-sandbox</a> repository.</p>
 <h1 id='configuration'>Configuration</h1>
 <p>From a drop-in replacement perspective, Eqivo can function out of the box using legacy framework configuration files. It is however capable of more modern configuration intake facilitating both development as well as production deployment.</p>
 
