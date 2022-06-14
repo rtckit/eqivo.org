@@ -665,6 +665,7 @@ components:
         AnswerUrl:
           description: 'Fully qualified URL which will provide the RestXML once the call connects'
           type: string
+          example: 'https://example.com/answer/'
         RejectCauses:
           description: 'Comma separated reject causes'
           type: string
@@ -673,18 +674,23 @@ components:
         CallerName:
           description: 'Caller Name to be set for the call'
           type: string
+          example: 'Bulk Test'
         ConfirmSound:
           description: 'Remote URL to fetch with POST HTTP request which must return a RestXML with Play, Wait and/or Speak Elements only (all others are ignored). This RESTXML is played to the called party when he answered'
           type: string
+          example: 'https://example.com/confirm_sound/'
         ConfirmKey:
           description: 'DTMF tone the called party must send to accept the call'
           type: string
+          example: '1'
         HangupUrl:
           description: 'Fully qualified URL to which the call hangup notification will be POSTed. `HangupCause` is added to the usual call [call notification parameters](#/components/schemas/CallNotificationParameters)'
           type: string
+          example: 'https://example.com/hangup/'
         RingUrl:
           description: 'Fully qualified URL to which the call ringing notification will be POSTed. `RequestUUID` and `CallUUID` is added to the usual [call notification parameters](#/components/schemas/CallNotificationParameters)'
           type: string
+          example: 'https://example.com/ring/'
         ExtraDialString:
           description: 'Additional [channel variables](https://freeswitch.org/confluence/display/FREESWITCH/Channel+Variables) to be added to the originate FreeSWITCH API call.'
           type: string
@@ -692,7 +698,7 @@ components:
         GatewayCodecs:
           description: 'List of codec(s) to be used for each gateway. Enclose codec groups in single quotes'
           type: string
-          example: '''PCMA,PCMU'',''G729,PCMU'',''PCMA,G729'''
+          example: "'PCMA,PCMU','G729,PCMU','PCMA,G729'"
         GatewayTimeouts:
           description: 'List of maximum timeout amounts (in seconds) for each gateway'
           type: string
@@ -710,12 +716,12 @@ components:
           type: boolean
           example: false
         TimeLimit:
-          description: 'Schedules the call''s hangup at a given time offset (in seconds) after the call is answered'
+          description: "Schedules the call's hangup at a given time offset (in seconds) after the call is answered"
           type: integer
           minimum: 1
           example: 90
         HangupOnRing:
-          description: 'Schedules the call''s hangup at a given time offset (in seconds) after the destination starts ringing'
+          description: "Schedules the call's hangup at a given time offset (in seconds) after the destination starts ringing"
           type: integer
           minimum: 1
           example: 90
@@ -746,15 +752,19 @@ components:
         AnswerUrl:
           description: 'Fully qualified URL which will provide the RestXML once the call connects'
           type: string
+          example: 'https://example.com/answer/'
         CallerName:
           description: 'Caller Name to be set for the call'
           type: string
+          example: Test
         HangupUrl:
           description: 'Fully qualified URL to which the call hangup notification will be POSTed. `HangupCause` is added to the usual call [call notification parameters](#/components/schemas/CallNotificationParameters)'
           type: string
+          example: 'https://example.com/hangup/'
         RingUrl:
           description: 'Fully qualified URL to which the call ringing notification will be POSTed. `RequestUUID` and `CallUUID` is added to the usual [call notification parameters](#/components/schemas/CallNotificationParameters)'
           type: string
+          example: 'https://example.com/ring/'
         ExtraDialString:
           description: 'Additional [channel variables](https://freeswitch.org/confluence/display/FREESWITCH/Channel+Variables) to be added to the originate FreeSWITCH API call.'
           type: string
@@ -762,7 +772,7 @@ components:
         GatewayCodecs:
           description: 'List of codec(s) to be used for each gateway. Enclose codec groups in single quotes'
           type: string
-          example: '''PCMA,PCMU'',''G729,PCMU'',''PCMA,G729'''
+          example: "'PCMA,PCMU','G729,PCMU','PCMA,G729'"
         GatewayTimeouts:
           description: 'List of maximum timeout amounts (in seconds) for each gateway'
           type: string
@@ -780,12 +790,12 @@ components:
           type: boolean
           example: false
         TimeLimit:
-          description: 'Schedules the call''s hangup at a given time offset (in seconds) after the call is answered'
+          description: "Schedules the call's hangup at a given time offset (in seconds) after the call is answered"
           type: integer
           minimum: 1
           example: 90
         HangupOnRing:
-          description: 'Schedules the call''s hangup at a given time offset (in seconds) after the destination starts ringing'
+          description: "Schedules the call's hangup at a given time offset (in seconds) after the destination starts ringing"
           type: integer
           minimum: 1
           example: 90
@@ -793,6 +803,57 @@ components:
           description: 'Core UUID of the desired FreeSWITCH instance (an Eqivo extension)'
           type: string
           example: 45521fc6-a4b3-42b6-96ad-9136256be216
+        MachineDetection:
+          description: 'Enables answering machine detection; optionally, it waits until the greeting message has been played back (an Eqivo extension)'
+          type: string
+          enum:
+            - Enable
+            - DetectMessageEnd
+          example: Enable
+        AsyncAMD:
+          description: 'When set to `true`, the call flow execution is blocked until answering machine detection is complete (an Eqivo extension)'
+          type: boolean
+          default: false
+          example: true
+        AsyncAmdStatusCallbackMethod:
+          description: 'HTTP method to be used when answering machine detection is completed (an Eqivo extension)'
+          type: string
+          default: POST
+          enum:
+            - POST
+            - GET
+          example: GET
+        AsyncAmdStatusCallback:
+          description: 'Fully qualified URL to which the answering machine detection result will be sent. `AnsweredBy` and `MachineDetectionDuration` are appended to the usual [call notification parameters](#/components/schemas/CallNotificationParameters) (an Eqivo extension)'
+          type: string
+        MachineDetectionTimeout:
+          description: 'Amount of time (in seconds) allotted for answering machine detection assessment (an Eqivo extension)'
+          type: integer
+          default: 30
+          maximum: 59
+          minimum: 3
+          example: 5
+        MachineDetectionSpeechThreshold:
+          description: 'Speech activity/utterance threshold (in milliseconds, an Eqivo extension)'
+          type: integer
+          default: 2400
+          maximum: 6000
+          minimum: 1000
+          example: 2000
+        MachineDetectionSpeechEndThreshold:
+          description: 'Silence threshold (in milliseconds, an Eqivo extension)'
+          type: integer
+          default: 1200
+          maximum: 5000
+          minimum: 500
+          example: 1000
+        MachineDetectionSilenceTimeout:
+          description: 'Initial silence threshold (in milliseconds, an Eqivo extension)'
+          type: integer
+          default: 5000
+          maximum: 10000
+          minimum: 2000
+          example: 3000
       type: object
     CancelScheduledHangupParameters:
       required:
@@ -1050,6 +1111,7 @@ components:
         AnswerUrl:
           description: 'Fully qualified URL which will provide the RestXML once the call connects'
           type: string
+          example: 'https://example.com/answer/'
         RejectCauses:
           description: 'Comma separated reject causes'
           type: string
@@ -1058,18 +1120,23 @@ components:
         CallerName:
           description: 'Caller Name to be set for the call'
           type: string
+          example: 'Group Test'
         ConfirmSound:
           description: 'Remote URL to fetch with POST HTTP request which must return a RestXML with Play, Wait and/or Speak Elements only (all others are ignored). This RESTXML is played to the called party when he answered'
           type: string
+          example: 'https://example.com/confirm_sound/'
         ConfirmKey:
           description: 'DTMF tone the called party must send to accept the call'
           type: string
+          example: '1'
         HangupUrl:
           description: 'Fully qualified URL to which the call hangup notification will be POSTed. `HangupCause` is added to the usual call [call notification parameters](#/components/schemas/CallNotificationParameters)'
           type: string
+          example: 'https://example.com/hangup/'
         RingUrl:
           description: 'Fully qualified URL to which the call ringing notification will be POSTed. `RequestUUID` and `CallUUID` is added to the usual [call notification parameters](#/components/schemas/CallNotificationParameters)'
           type: string
+          example: 'https://example.com/ring/'
         ExtraDialString:
           description: 'Additional [channel variables](https://freeswitch.org/confluence/display/FREESWITCH/Channel+Variables) to be added to the originate FreeSWITCH API call.'
           type: string
@@ -1077,7 +1144,7 @@ components:
         GatewayCodecs:
           description: 'List of codec(s) to be used for each gateway. Enclose codec groups in single quotes'
           type: string
-          example: '''PCMA,PCMU'',''G729,PCMU'',''PCMA,G729'''
+          example: "'PCMA,PCMU','G729,PCMU','PCMA,G729'"
         GatewayTimeouts:
           description: 'List of maximum timeout amounts (in seconds) for each gateway'
           type: string
@@ -1095,12 +1162,12 @@ components:
           type: boolean
           example: false
         TimeLimit:
-          description: 'Schedules the call''s hangup at a given time offset (in seconds) after the call is answered'
+          description: "Schedules the call's hangup at a given time offset (in seconds) after the call is answered"
           type: integer
           minimum: 1
           example: 90
         HangupOnRing:
-          description: 'Schedules the call''s hangup at a given time offset (in seconds) after the destination starts ringing'
+          description: "Schedules the call's hangup at a given time offset (in seconds) after the destination starts ringing"
           type: integer
           minimum: 1
           example: 90
@@ -1155,7 +1222,7 @@ components:
           default: false
           example: true
         Mix:
-          description: 'Whether the media should be mixed with the call''s audio stream'
+          description: "Whether the media should be mixed with the call's audio stream"
           type: boolean
           default: true
           example: false
@@ -1271,7 +1338,7 @@ components:
           default: false
           example: true
         Mix:
-          description: 'Whether the media should be mixed with the call''s audio stream'
+          description: "Whether the media should be mixed with the call's audio stream"
           type: boolean
           default: true
           example: false
@@ -1392,7 +1459,7 @@ components:
             - 'Mandatory Parameters Missing'
             - 'This Delimiter is not allowed'
             - 'BulkCalls should be used for at least 2 numbers'
-            - '''To'' parameter length does not match ''Gateways'' Length'
+            - "'To' parameter length does not match 'Gateways' Length"
             - 'AnswerUrl is not Valid'
             - 'HangupUrl is not Valid'
             - 'RingUrl is not Valid'
@@ -1839,7 +1906,7 @@ components:
             - 'Mandatory Parameters Missing'
             - 'This Delimiter is not allowed'
             - 'GroupCall should be used for at least 2 numbers'
-            - '''To'' parameter length does not match ''Gateways'' Length'
+            - "'To' parameter length does not match 'Gateways' Length"
             - 'AnswerUrl is not Valid'
             - 'HangupUrl is not Valid'
             - 'RingUrl is not Valid'
@@ -2073,7 +2140,7 @@ components:
           enum:
             - 'SoundTouch Executed'
             - 'CallUUID Parameter Missing'
-            - 'AudioDirection Parameter Must be ''in'' or ''out'''
+            - "AudioDirection Parameter Must be 'in' or 'out'"
             - 'PitchSemiTones Parameter must be float'
             - 'PitchSemiTones Parameter must be between -14 and 14'
             - 'PitchOctaves Parameter must be float'
@@ -2148,15 +2215,15 @@ components:
           type: string
           example: localhost
         CoreUUID:
-          description: 'FreeSWITCH''s instance unique identifier (Eqivo extension)'
+          description: "FreeSWITCH's instance unique identifier (Eqivo extension)"
           type: string
           example: b14e0893-98ef-44b6-8e4b-e4bcf937bfa9
         CallUUID:
-          description: 'Call''s unique identifier, assigned by FreeSWITCH'
+          description: "Call's unique identifier, assigned by FreeSWITCH"
           type: string
           example: 7ff22856-357e-4b77-812c-22d28cbb8982
         CallStatus:
-          description: 'Call''s current status'
+          description: "Call's current status"
           type: string
           enum:
             - ringing
@@ -2166,11 +2233,11 @@ components:
             - completed
           example: in-progress
         ALegUUID:
-          description: 'A leg call''s unique identifier, assigned by FreeSWITCH'
+          description: "A leg call's unique identifier, assigned by FreeSWITCH"
           type: string
           example: 8dd5a1e0-6621-4a07-98b3-e033b014fba7
         ALegRequestUUID:
-          description: 'A leg call request''s unique identifier'
+          description: "A leg call request's unique identifier"
           type: string
           example: 5a4ef7cf-dc08-4cd3-a9d0-6d1555ba3309
         CallerName:
@@ -2194,12 +2261,26 @@ components:
           type: string
           example: '15551239876'
         Direction:
-          description: 'Call''s direction'
+          description: "Call's direction"
           type: string
           enum:
             - inbound
             - outbound
           example: outbound
+        MachineDetectionDuration:
+          description: 'Actual answering machine detection assessment duration (in milliseconds)'
+          type: integer
+          example: '19'
+        AnsweredBy:
+          description: 'Answering actor, when answering machine detection is enabled'
+          type: string
+          enum:
+            - machine_start
+            - machine_end_beep
+            - machine_end_other
+            - human
+            - unknown
+          example: human
       type: object
   securitySchemes:
     basicAuth:

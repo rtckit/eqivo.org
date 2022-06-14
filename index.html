@@ -600,7 +600,7 @@
         <ul class="toc-footer">
             <li><a href='https://github.com/rtckit/eqivo' data-goatcounter-click='ext-github-menu'><i class='fab fa-github'></i> Source code on GitHub</a></li>
             <li><a href='https://hub.docker.com/r/rtckit/eqivo' data-goatcounter-click='ext-dockerhub-menu'><i class='fab fa-docker'></i> OCI image on DockerHub</a></li>
-            <li><a href='https://github.com/rtckit/eqivo-sandbox' data-goatcounter-click='ext-github-menu'><i class='fab fa-github'></i> Common scenario examples</a></li>
+            <li><a href='https://github.com/rtckit/eqivo-sandbox' data-goatcounter-click='ext-github-menu'><i class='fab fa-github'></i> Integration Examples</a></li>
         </ul>
     </div>
     <div class="page-wrapper">
@@ -617,7 +617,7 @@
 
 <p>It relies on <a href="https://github.com/signalwire/freeswitch">FreeSWITCH</a> for signalling (SIP, Verto, etc.) and media (RTP) handling. Eqivo sits between FreeSWITCH and your application and interacts with the latter by accepting inbound API calls as well as issuing outgoing webhook calls to your designated endpoints.</p>
 
-<p>Being an attempt at reimplementing the legacy Plivo framework, Eqivo can function as a drop-in replacement for <em>most</em> use cases.</p>
+<p>Being a reimplementation of the legacy Plivo framework, Eqivo can function as a drop-in replacement for <em>most</em> use cases. It also features several extensions, including M:N (Eqivo:FreeSWITCH) deployment configurations and answering machine detection.</p>
 <h1 id='overview'>Overview</h1>
 <blockquote>
 <p><img src="images/eqivo-diagram-afb688e2.png" title="Eqivo Diagram" alt="Eqivo Diagram" /></p>
@@ -644,7 +644,7 @@ docker run rtckit/eqivo
 <p>Container deployment is the recommended method for integrating Eqivo in your applications; ready-made OCI images are available on <a href="https://hub.docker.com/r/rtckit/eqivo">DockerHub</a>. Configuration via environment variables is ideal for this approach, and orchestration systems such as Kubernetes can transparently handle secret management on your behalf.</p>
 
 <p>For every release, there are two images available, the production one (using version tags) which contains only Eqivo and the PHP runtime and its dependencies. There is also a debug image (tagged with the <code>-full</code> suffix) which includes a complete Debian userland to facilitate troubleshooting.</p>
-<h3 id='phar-package'>Phar Package</h3><div class="highlight"><pre class="highlight sh tab-shell"><code>curl <span class="nt">-Ls</span> https://github.com/rtckit/eqivo/releases/download/v0.5.3/eqivo.phar <span class="nt">-o</span> eqivo
+<h3 id='phar-package'>Phar Package</h3><div class="highlight"><pre class="highlight sh tab-shell"><code>curl <span class="nt">-Ls</span> https://github.com/rtckit/eqivo/releases/download/v0.5.4/eqivo.phar <span class="nt">-o</span> eqivo
 <span class="nb">chmod</span> +x eqivo
 <span class="nb">sudo mv </span>eqivo /usr/local/bin
 eqivo
@@ -732,7 +732,7 @@ eqivo
     <span class="pi">-</span> <span class="na">eslHost</span><span class="pi">:</span> <span class="s1">'</span><span class="s">127.0.0.1'</span>
       <span class="na">eslPort</span><span class="pi">:</span> <span class="m">8021</span>
       <span class="na">eslPassword</span><span class="pi">:</span> <span class="s1">'</span><span class="s">secret'</span>
-    <span class="pi">-</span> <span class="na">eslHost</span><span class="pi">:</span> <span class="s1">'</span><span class="s">2nd-freeswitch.fancy.app'</span>
+    <span class="pi">-</span> <span class="na">eslHost</span><span class="pi">:</span> <span class="s1">'</span><span class="s">2nd-freeswitch.example.com'</span>
       <span class="na">eslPort</span><span class="pi">:</span> <span class="m">8021</span>
       <span class="na">eslUser</span><span class="pi">:</span> <span class="s1">'</span><span class="s">esluser'</span> <span class="c1"># if defined in event_socket.conf</span>
       <span class="na">eslPassword</span><span class="pi">:</span> <span class="s1">'</span><span class="s">bfrx738'</span>
@@ -750,9 +750,9 @@ eqivo
 <li>Command line argument: <code>--core &lt;corespec&gt;</code> (can be used multiple times)</li>
 <li>Environment variable: <code>EQIVO_CORE_0</code>, <code>EQIVO_CORE_1</code> and so forth</li>
 </ul>
-<div class="highlight"><pre class="highlight plaintext"><code>--core secret@127.0.0.1:8021 --core esluser:bfrx738@2nd-freeswitch.fancy.app:8021
+<div class="highlight"><pre class="highlight plaintext"><code>--core secret@127.0.0.1:8021 --core esluser:bfrx738@2nd-freeswitch.example.com:8021
 </code></pre></div><div class="highlight"><pre class="highlight sh tab-shell"><code><span class="nb">export </span><span class="nv">EQIVO_CORE_0</span><span class="o">=</span>secret@127.0.0.1:8021
-<span class="nb">export </span><span class="nv">EQIVO_CORE_1</span><span class="o">=</span>esluser:bfrx738@2nd-freeswitch.fancy.app:8021
+<span class="nb">export </span><span class="nv">EQIVO_CORE_1</span><span class="o">=</span>esluser:bfrx738@2nd-freeswitch.example.com:8021
 </code></pre></div>
 <p>The <em>corespec</em> for CLI arguments and environment variables must be formatted as follows:</p>
 
@@ -980,7 +980,7 @@ eqivo
 <span class="nt">&lt;Response&gt;</span> 
     <span class="nt">&lt;Speak&gt;</span>Welcome!<span class="nt">&lt;/Speak&gt;</span>
     <span class="nt">&lt;Speak&gt;</span>To whom do I have the pleasure of speaking with?<span class="nt">&lt;/Speak&gt;</span>
-    <span class="nt">&lt;Record</span> <span class="na">action=</span><span class="s">"https://fancy.app/endpoint/got_name/"</span> <span class="na">fileName=</span><span class="s">"caller_name"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;Record</span> <span class="na">action=</span><span class="s">"https://example.com/endpoint/got_name/"</span> <span class="na">fileName=</span><span class="s">"caller_name"</span> <span class="nt">/&gt;</span>
     <span class="nt">&lt;Speak&gt;</span>I'm sorry, I didn't get that!<span class="nt">&lt;/Speak&gt;</span>
 <span class="nt">&lt;/Response&gt;</span>
 </code></pre></div>
@@ -1419,7 +1419,7 @@ eqivo
 </blockquote>
 <div class="highlight"><pre class="highlight xml tab-xml"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
 <span class="nt">&lt;Response&gt;</span>
-    <span class="nt">&lt;GetDigits</span> <span class="na">action=</span><span class="s">"https://fancy.app/endpoint/got_digits/"</span> <span class="na">numDigits=</span><span class="s">"4"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;GetDigits</span> <span class="na">action=</span><span class="s">"https://example.com/endpoint/got_digits/"</span> <span class="na">numDigits=</span><span class="s">"4"</span><span class="nt">&gt;</span>
         <span class="nt">&lt;Speak&gt;</span>
             Please enter your PIN followed by the pound sign.
         <span class="nt">&lt;/Speak&gt;</span>
@@ -1516,7 +1516,7 @@ eqivo
 </blockquote>
 <div class="highlight"><pre class="highlight xml tab-xml"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
 <span class="nt">&lt;Response&gt;</span>
-    <span class="nt">&lt;GetSpeech</span> <span class="na">action=</span><span class="s">"https://fancy.app/endpoint/got_speech/"</span> <span class="na">grammar=</span><span class="s">"pizza_yesno"</span> <span class="na">timeout=</span><span class="s">"10"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;GetSpeech</span> <span class="na">action=</span><span class="s">"https://example.com/endpoint/got_speech/"</span> <span class="na">grammar=</span><span class="s">"pizza_yesno"</span> <span class="na">timeout=</span><span class="s">"10"</span><span class="nt">&gt;</span>
         <span class="nt">&lt;Speak&gt;</span>
             Would you like to proceed?
         <span class="nt">&lt;/Speak&gt;</span>
@@ -1631,7 +1631,7 @@ eqivo
 </blockquote>
 <div class="highlight"><pre class="highlight xml tab-xml"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
 <span class="nt">&lt;Response&gt;</span>
-    <span class="nt">&lt;Play&gt;</span>http_cache://https://fancy.app/media/hello.wav<span class="nt">&lt;/Play&gt;</span>
+    <span class="nt">&lt;Play&gt;</span>http_cache://https://example.com/media/hello.wav<span class="nt">&lt;/Play&gt;</span>
     <span class="nt">&lt;Play&gt;</span>/tmp/media/message_of_the_day.mp3<span class="nt">&lt;/Play&gt;</span>
 <span class="nt">&lt;/Response&gt;</span>
 </code></pre></div>
@@ -1678,7 +1678,7 @@ eqivo
 <div class="highlight"><pre class="highlight xml tab-xml"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
 <span class="nt">&lt;Response&gt;</span>
     <span class="nt">&lt;Speak&gt;</span>Please state your name after the beep<span class="nt">&lt;/Speak&gt;</span>
-    <span class="nt">&lt;Record</span> <span class="na">action=</span><span class="s">"https://fancy.app/endpoint/got_recording/"</span> <span class="na">maxLength=</span><span class="s">"15"</span><span class="nt">&gt;&lt;/Record&gt;</span>
+    <span class="nt">&lt;Record</span> <span class="na">action=</span><span class="s">"https://example.com/endpoint/got_recording/"</span> <span class="na">maxLength=</span><span class="s">"15"</span><span class="nt">&gt;&lt;/Record&gt;</span>
     <span class="nt">&lt;Speak&gt;</span>I couldn't get that!<span class="nt">&lt;/Speak&gt;</span>
 <span class="nt">&lt;/Response&gt;</span>
 </code></pre></div>
@@ -1800,7 +1800,7 @@ eqivo
 <div class="highlight"><pre class="highlight xml tab-xml"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;</span>
 <span class="nt">&lt;Response&gt;</span>
     <span class="nt">&lt;Speak&gt;</span>Please hold while we're looking up your account<span class="nt">&lt;/Speak&gt;</span>
-    <span class="nt">&lt;Redirect&gt;</span>https://fancy.app/stage2/<span class="nt">&lt;/Redirect&gt;</span>
+    <span class="nt">&lt;Redirect&gt;</span>https://example.com/stage2/<span class="nt">&lt;/Redirect&gt;</span>
 <span class="nt">&lt;/Response&gt;</span>
 </code></pre></div>
 <p><strong>method</strong></p>
@@ -1819,7 +1819,7 @@ eqivo
 </blockquote>
 <div class="highlight"><pre class="highlight xml tab-xml"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;</span>
 <span class="nt">&lt;Response&gt;</span>
-    <span class="nt">&lt;SIPTransfer&gt;</span>sip:2095@pbx.fancy.app<span class="nt">&lt;/SIPTransfer&gt;</span>
+    <span class="nt">&lt;SIPTransfer&gt;</span>sip:2095@pbx.example.com<span class="nt">&lt;/SIPTransfer&gt;</span>
 <span class="nt">&lt;/Response&gt;</span>
 </code></pre></div><h2 id='speak'>Speak</h2>
 <p>The <code>&lt;Speak&gt;</code> renders audio via text-to-speech.</p>
@@ -1942,13 +1942,13 @@ curl <span class="nt">-X</span> POST /v0.1/BulkCall/ <span class="se">\</span>
 <span class="na">From</span><span class="pi">:</span> <span class="s2">"</span><span class="s">15551234567"</span>
 <span class="na">To</span><span class="pi">:</span> <span class="s2">"</span><span class="s">15557654321"</span>
 <span class="na">Gateways</span><span class="pi">:</span> <span class="s">user/,sofia/gateway/PSTNgateway1/,sofia/gateway/PSTNgateway2/</span>
-<span class="na">AnswerUrl</span><span class="pi">:</span> <span class="s">string</span>
+<span class="na">AnswerUrl</span><span class="pi">:</span> <span class="s">https://example.com/answer/</span>
 <span class="na">RejectCauses</span><span class="pi">:</span> <span class="s">USER_BUSY,NO_ANSWER</span>
-<span class="na">CallerName</span><span class="pi">:</span> <span class="s">string</span>
-<span class="na">ConfirmSound</span><span class="pi">:</span> <span class="s">string</span>
-<span class="na">ConfirmKey</span><span class="pi">:</span> <span class="s">string</span>
-<span class="na">HangupUrl</span><span class="pi">:</span> <span class="s">string</span>
-<span class="na">RingUrl</span><span class="pi">:</span> <span class="s">string</span>
+<span class="na">CallerName</span><span class="pi">:</span> <span class="s">Bulk Test</span>
+<span class="na">ConfirmSound</span><span class="pi">:</span> <span class="s">https://example.com/confirm_sound/</span>
+<span class="na">ConfirmKey</span><span class="pi">:</span> <span class="s2">"</span><span class="s">1"</span>
+<span class="na">HangupUrl</span><span class="pi">:</span> <span class="s">https://example.com/hangup/</span>
+<span class="na">RingUrl</span><span class="pi">:</span> <span class="s">https://example.com/ring/</span>
 <span class="na">ExtraDialString</span><span class="pi">:</span> <span class="s">bridge_early_media=true,hangup_after_bridge=true</span>
 <span class="na">GatewayCodecs</span><span class="pi">:</span> <span class="s2">"</span><span class="s">'PCMA,PCMU','G729,PCMU','PCMA,G729'"</span>
 <span class="na">GatewayTimeouts</span><span class="pi">:</span> <span class="s">10,30,20</span>
@@ -2172,10 +2172,10 @@ curl <span class="nt">-X</span> POST /v0.1/Call/ <span class="se">\</span>
 <div class="highlight"><pre class="highlight yaml tab-yaml"><code><span class="na">From</span><span class="pi">:</span> <span class="s2">"</span><span class="s">15551234567"</span>
 <span class="na">To</span><span class="pi">:</span> <span class="s2">"</span><span class="s">15557654321"</span>
 <span class="na">Gateways</span><span class="pi">:</span> <span class="s">user/,sofia/gateway/PSTNgateway1/,sofia/gateway/PSTNgateway2/</span>
-<span class="na">AnswerUrl</span><span class="pi">:</span> <span class="s">string</span>
-<span class="na">CallerName</span><span class="pi">:</span> <span class="s">string</span>
-<span class="na">HangupUrl</span><span class="pi">:</span> <span class="s">string</span>
-<span class="na">RingUrl</span><span class="pi">:</span> <span class="s">string</span>
+<span class="na">AnswerUrl</span><span class="pi">:</span> <span class="s">https://example.com/answer/</span>
+<span class="na">CallerName</span><span class="pi">:</span> <span class="s">Test</span>
+<span class="na">HangupUrl</span><span class="pi">:</span> <span class="s">https://example.com/hangup/</span>
+<span class="na">RingUrl</span><span class="pi">:</span> <span class="s">https://example.com/ring/</span>
 <span class="na">ExtraDialString</span><span class="pi">:</span> <span class="s">bridge_early_media=true,hangup_after_bridge=true</span>
 <span class="na">GatewayCodecs</span><span class="pi">:</span> <span class="s2">"</span><span class="s">'PCMA,PCMU','G729,PCMU','PCMA,G729'"</span>
 <span class="na">GatewayTimeouts</span><span class="pi">:</span> <span class="s">10,30,20</span>
@@ -2185,6 +2185,14 @@ curl <span class="nt">-X</span> POST /v0.1/Call/ <span class="se">\</span>
 <span class="na">TimeLimit</span><span class="pi">:</span> <span class="m">90</span>
 <span class="na">HangupOnRing</span><span class="pi">:</span> <span class="m">90</span>
 <span class="na">CoreUUID</span><span class="pi">:</span> <span class="s">45521fc6-a4b3-42b6-96ad-9136256be216</span>
+<span class="na">MachineDetection</span><span class="pi">:</span> <span class="s">Enable</span>
+<span class="na">AsyncAMD</span><span class="pi">:</span> <span class="no">true</span>
+<span class="na">AsyncAmdStatusCallbackMethod</span><span class="pi">:</span> <span class="s">GET</span>
+<span class="na">AsyncAmdStatusCallback</span><span class="pi">:</span> <span class="s">string</span>
+<span class="na">MachineDetectionTimeout</span><span class="pi">:</span> <span class="m">5</span>
+<span class="na">MachineDetectionSpeechThreshold</span><span class="pi">:</span> <span class="m">2000</span>
+<span class="na">MachineDetectionSpeechEndThreshold</span><span class="pi">:</span> <span class="m">1000</span>
+<span class="na">MachineDetectionSilenceTimeout</span><span class="pi">:</span> <span class="m">3000</span>
 
 </code></pre></div>
 <h3 id="/v0.1/call/-parameters">Parameters</h3>
@@ -2309,6 +2317,86 @@ curl <span class="nt">-X</span> POST /v0.1/Call/ <span class="se">\</span>
 <td>string</td>
 <td>false</td>
 <td>Core UUID of the desired FreeSWITCH instance (an Eqivo extension)</td>
+</tr>
+<tr>
+<td>MachineDetection</td>
+<td>body</td>
+<td>string</td>
+<td>false</td>
+<td>Enables answering machine detection; optionally, it waits until the greeting message has been played back (an Eqivo extension)</td>
+</tr>
+<tr>
+<td>AsyncAMD</td>
+<td>body</td>
+<td>boolean</td>
+<td>false</td>
+<td>When set to <code>true</code>, the call flow execution is blocked until answering machine detection is complete (an Eqivo extension)</td>
+</tr>
+<tr>
+<td>AsyncAmdStatusCallbackMethod</td>
+<td>body</td>
+<td>string</td>
+<td>false</td>
+<td>HTTP method to be used when answering machine detection is completed (an Eqivo extension)</td>
+</tr>
+<tr>
+<td>AsyncAmdStatusCallback</td>
+<td>body</td>
+<td>string</td>
+<td>false</td>
+<td>Fully qualified URL to which the answering machine detection result will be sent. <code>AnsweredBy</code> and <code>MachineDetectionDuration</code> are appended to the usual <a href="#/components/schemas/CallNotificationParameters">call notification parameters</a> (an Eqivo extension)</td>
+</tr>
+<tr>
+<td>MachineDetectionTimeout</td>
+<td>body</td>
+<td>integer</td>
+<td>false</td>
+<td>Amount of time (in seconds) allotted for answering machine detection assessment (an Eqivo extension)</td>
+</tr>
+<tr>
+<td>MachineDetectionSpeechThreshold</td>
+<td>body</td>
+<td>integer</td>
+<td>false</td>
+<td>Speech activity/utterance threshold (in milliseconds, an Eqivo extension)</td>
+</tr>
+<tr>
+<td>MachineDetectionSpeechEndThreshold</td>
+<td>body</td>
+<td>integer</td>
+<td>false</td>
+<td>Silence threshold (in milliseconds, an Eqivo extension)</td>
+</tr>
+<tr>
+<td>MachineDetectionSilenceTimeout</td>
+<td>body</td>
+<td>integer</td>
+<td>false</td>
+<td>Initial silence threshold (in milliseconds, an Eqivo extension)</td>
+</tr>
+</tbody></table>
+<h4 id='enumerated-values'>Enumerated Values</h4>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>MachineDetection</td>
+<td>Enable</td>
+</tr>
+<tr>
+<td>MachineDetection</td>
+<td>DetectMessageEnd</td>
+</tr>
+<tr>
+<td>AsyncAmdStatusCallbackMethod</td>
+<td>POST</td>
+</tr>
+<tr>
+<td>AsyncAmdStatusCallbackMethod</td>
+<td>GET</td>
 </tr>
 </tbody></table>
 
@@ -2514,13 +2602,13 @@ curl <span class="nt">-X</span> POST /v0.1/GroupCall/ <span class="se">\</span>
 <span class="na">From</span><span class="pi">:</span> <span class="s2">"</span><span class="s">15551234567"</span>
 <span class="na">To</span><span class="pi">:</span> <span class="s2">"</span><span class="s">15557654321"</span>
 <span class="na">Gateways</span><span class="pi">:</span> <span class="s">user/,sofia/gateway/PSTNgateway1/,sofia/gateway/PSTNgateway2/</span>
-<span class="na">AnswerUrl</span><span class="pi">:</span> <span class="s">string</span>
+<span class="na">AnswerUrl</span><span class="pi">:</span> <span class="s">https://example.com/answer/</span>
 <span class="na">RejectCauses</span><span class="pi">:</span> <span class="s">USER_BUSY,NO_ANSWER</span>
-<span class="na">CallerName</span><span class="pi">:</span> <span class="s">string</span>
-<span class="na">ConfirmSound</span><span class="pi">:</span> <span class="s">string</span>
-<span class="na">ConfirmKey</span><span class="pi">:</span> <span class="s">string</span>
-<span class="na">HangupUrl</span><span class="pi">:</span> <span class="s">string</span>
-<span class="na">RingUrl</span><span class="pi">:</span> <span class="s">string</span>
+<span class="na">CallerName</span><span class="pi">:</span> <span class="s">Group Test</span>
+<span class="na">ConfirmSound</span><span class="pi">:</span> <span class="s">https://example.com/confirm_sound/</span>
+<span class="na">ConfirmKey</span><span class="pi">:</span> <span class="s2">"</span><span class="s">1"</span>
+<span class="na">HangupUrl</span><span class="pi">:</span> <span class="s">https://example.com/hangup/</span>
+<span class="na">RingUrl</span><span class="pi">:</span> <span class="s">https://example.com/ring/</span>
 <span class="na">ExtraDialString</span><span class="pi">:</span> <span class="s">bridge_early_media=true,hangup_after_bridge=true</span>
 <span class="na">GatewayCodecs</span><span class="pi">:</span> <span class="s2">"</span><span class="s">'PCMA,PCMU','G729,PCMU','PCMA,G729'"</span>
 <span class="na">GatewayTimeouts</span><span class="pi">:</span> <span class="s">10,30,20</span>
@@ -2926,7 +3014,7 @@ curl <span class="nt">-X</span> POST /v0.1/Play/ <span class="se">\</span>
 <td>Whether the media should be mixed with the call&#39;s audio stream</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values'>Enumerated Values</h4>
+<h4 id='enumerated-values-2'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -3124,7 +3212,7 @@ curl <span class="nt">-X</span> POST /v0.1/RecordStart/ <span class="se">\</span
 <td>Maximum recording length, in seconds</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-2'>Enumerated Values</h4>
+<h4 id='enumerated-values-3'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -3425,7 +3513,7 @@ curl <span class="nt">-X</span> POST /v0.1/SchedulePlay/ <span class="se">\</spa
 <td>Whether the media should be mixed with the call&#39;s audio stream</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-3'>Enumerated Values</h4>
+<h4 id='enumerated-values-4'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -3535,7 +3623,7 @@ curl <span class="nt">-X</span> POST /v0.1/SendDigits/ <span class="se">\</span>
 <td>Call leg(s) to which DTMFs will be sent; <code>aleg</code> refers to the initial call leg, <code>bleg</code> refers to the bridged call leg, if applicable.</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-4'>Enumerated Values</h4>
+<h4 id='enumerated-values-5'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -3676,7 +3764,7 @@ curl <span class="nt">-X</span> POST /v0.1/SoundTouch/ <span class="se">\</span>
 <td>Adjust the tempo</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-5'>Enumerated Values</h4>
+<h4 id='enumerated-values-6'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -4633,7 +4721,7 @@ curl <span class="nt">-X</span> POST /v0.1/ConferenceRecordStart/ <span class="s
 <td>Recording file name (without extension); if empty, a timestamp based file name will be generated</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-6'>Enumerated Values</h4>
+<h4 id='enumerated-values-7'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -5035,13 +5123,13 @@ basicAuth
   </span><span class="nl">"From"</span><span class="p">:</span><span class="w"> </span><span class="s2">"15551234567"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"To"</span><span class="p">:</span><span class="w"> </span><span class="s2">"15557654321"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"Gateways"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user/,sofia/gateway/PSTNgateway1/,sofia/gateway/PSTNgateway2/"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"AnswerUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"AnswerUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/answer/"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"RejectCauses"</span><span class="p">:</span><span class="w"> </span><span class="s2">"USER_BUSY,NO_ANSWER"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"CallerName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"ConfirmSound"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"ConfirmKey"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"HangupUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"RingUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"CallerName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Bulk Test"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"ConfirmSound"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/confirm_sound/"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"ConfirmKey"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"HangupUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/hangup/"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"RingUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/ring/"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"ExtraDialString"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bridge_early_media=true,hangup_after_bridge=true"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"GatewayCodecs"</span><span class="p">:</span><span class="w"> </span><span class="s2">"'PCMA,PCMU','G729,PCMU','PCMA,G729'"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"GatewayTimeouts"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10,30,20"</span><span class="p">,</span><span class="w">
@@ -5215,10 +5303,10 @@ basicAuth
   </span><span class="nl">"From"</span><span class="p">:</span><span class="w"> </span><span class="s2">"15551234567"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"To"</span><span class="p">:</span><span class="w"> </span><span class="s2">"15557654321"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"Gateways"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user/,sofia/gateway/PSTNgateway1/,sofia/gateway/PSTNgateway2/"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"AnswerUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"CallerName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"HangupUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"RingUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"AnswerUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/answer/"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"CallerName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"HangupUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/hangup/"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"RingUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/ring/"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"ExtraDialString"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bridge_early_media=true,hangup_after_bridge=true"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"GatewayCodecs"</span><span class="p">:</span><span class="w"> </span><span class="s2">"'PCMA,PCMU','G729,PCMU','PCMA,G729'"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"GatewayTimeouts"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10,30,20"</span><span class="p">,</span><span class="w">
@@ -5227,7 +5315,15 @@ basicAuth
   </span><span class="nl">"SendOnPreanswer"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
   </span><span class="nl">"TimeLimit"</span><span class="p">:</span><span class="w"> </span><span class="mi">90</span><span class="p">,</span><span class="w">
   </span><span class="nl">"HangupOnRing"</span><span class="p">:</span><span class="w"> </span><span class="mi">90</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"CoreUUID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"45521fc6-a4b3-42b6-96ad-9136256be216"</span><span class="w">
+  </span><span class="nl">"CoreUUID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"45521fc6-a4b3-42b6-96ad-9136256be216"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"MachineDetection"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Enable"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"AsyncAMD"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"AsyncAmdStatusCallbackMethod"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"AsyncAmdStatusCallback"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"MachineDetectionTimeout"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"MachineDetectionSpeechThreshold"</span><span class="p">:</span><span class="w"> </span><span class="mi">2000</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"MachineDetectionSpeechEndThreshold"</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"MachineDetectionSilenceTimeout"</span><span class="p">:</span><span class="w"> </span><span class="mi">3000</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
 </span></code></pre></div><h3 id='properties-2'>Properties</h3>
@@ -5351,6 +5447,86 @@ basicAuth
 <td>false</td>
 <td>none</td>
 <td>Core UUID of the desired FreeSWITCH instance (an Eqivo extension)</td>
+</tr>
+<tr>
+<td>MachineDetection</td>
+<td>string</td>
+<td>false</td>
+<td>none</td>
+<td>Enables answering machine detection; optionally, it waits until the greeting message has been played back (an Eqivo extension)</td>
+</tr>
+<tr>
+<td>AsyncAMD</td>
+<td>boolean</td>
+<td>false</td>
+<td>none</td>
+<td>When set to <code>true</code>, the call flow execution is blocked until answering machine detection is complete (an Eqivo extension)</td>
+</tr>
+<tr>
+<td>AsyncAmdStatusCallbackMethod</td>
+<td>string</td>
+<td>false</td>
+<td>none</td>
+<td>HTTP method to be used when answering machine detection is completed (an Eqivo extension)</td>
+</tr>
+<tr>
+<td>AsyncAmdStatusCallback</td>
+<td>string</td>
+<td>false</td>
+<td>none</td>
+<td>Fully qualified URL to which the answering machine detection result will be sent. <code>AnsweredBy</code> and <code>MachineDetectionDuration</code> are appended to the usual <a href="#/components/schemas/CallNotificationParameters">call notification parameters</a> (an Eqivo extension)</td>
+</tr>
+<tr>
+<td>MachineDetectionTimeout</td>
+<td>integer</td>
+<td>false</td>
+<td>none</td>
+<td>Amount of time (in seconds) allotted for answering machine detection assessment (an Eqivo extension)</td>
+</tr>
+<tr>
+<td>MachineDetectionSpeechThreshold</td>
+<td>integer</td>
+<td>false</td>
+<td>none</td>
+<td>Speech activity/utterance threshold (in milliseconds, an Eqivo extension)</td>
+</tr>
+<tr>
+<td>MachineDetectionSpeechEndThreshold</td>
+<td>integer</td>
+<td>false</td>
+<td>none</td>
+<td>Silence threshold (in milliseconds, an Eqivo extension)</td>
+</tr>
+<tr>
+<td>MachineDetectionSilenceTimeout</td>
+<td>integer</td>
+<td>false</td>
+<td>none</td>
+<td>Initial silence threshold (in milliseconds, an Eqivo extension)</td>
+</tr>
+</tbody></table>
+<h4 id='enumerated-values-8'>Enumerated Values</h4>
+<table><thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>MachineDetection</td>
+<td>Enable</td>
+</tr>
+<tr>
+<td>MachineDetection</td>
+<td>DetectMessageEnd</td>
+</tr>
+<tr>
+<td>AsyncAmdStatusCallbackMethod</td>
+<td>POST</td>
+</tr>
+<tr>
+<td>AsyncAmdStatusCallbackMethod</td>
+<td>GET</td>
 </tr>
 </tbody></table>
 
@@ -5771,7 +5947,7 @@ basicAuth
 <td>Recording file name (without extension); if empty, a timestamp based file name will be generated</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-7'>Enumerated Values</h4>
+<h4 id='enumerated-values-9'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -5955,13 +6131,13 @@ basicAuth
   </span><span class="nl">"From"</span><span class="p">:</span><span class="w"> </span><span class="s2">"15551234567"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"To"</span><span class="p">:</span><span class="w"> </span><span class="s2">"15557654321"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"Gateways"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user/,sofia/gateway/PSTNgateway1/,sofia/gateway/PSTNgateway2/"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"AnswerUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"AnswerUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/answer/"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"RejectCauses"</span><span class="p">:</span><span class="w"> </span><span class="s2">"USER_BUSY,NO_ANSWER"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"CallerName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"ConfirmSound"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"ConfirmKey"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"HangupUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"RingUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"CallerName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Group Test"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"ConfirmSound"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/confirm_sound/"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"ConfirmKey"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"HangupUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/hangup/"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"RingUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.com/ring/"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"ExtraDialString"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bridge_early_media=true,hangup_after_bridge=true"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"GatewayCodecs"</span><span class="p">:</span><span class="w"> </span><span class="s2">"'PCMA,PCMU','G729,PCMU','PCMA,G729'"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"GatewayTimeouts"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10,30,20"</span><span class="p">,</span><span class="w">
@@ -6241,7 +6417,7 @@ basicAuth
 <td>Whether the media should be mixed with the call&#39;s audio stream</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-8'>Enumerated Values</h4>
+<h4 id='enumerated-values-10'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -6351,7 +6527,7 @@ basicAuth
 <td>Maximum recording length, in seconds</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-9'>Enumerated Values</h4>
+<h4 id='enumerated-values-11'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -6518,7 +6694,7 @@ basicAuth
 <td>Whether the media should be mixed with the call&#39;s audio stream</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-10'>Enumerated Values</h4>
+<h4 id='enumerated-values-12'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -6583,7 +6759,7 @@ basicAuth
 <td>Call leg(s) to which DTMFs will be sent; <code>aleg</code> refers to the initial call leg, <code>bleg</code> refers to the bridged call leg, if applicable.</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-11'>Enumerated Values</h4>
+<h4 id='enumerated-values-13'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -6680,7 +6856,7 @@ basicAuth
 <td>Adjust the tempo</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-12'>Enumerated Values</h4>
+<h4 id='enumerated-values-14'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -6819,7 +6995,7 @@ basicAuth
 <td>API server which handled this request (an Eqivo extension)</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-13'>Enumerated Values</h4>
+<h4 id='enumerated-values-15'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -6916,7 +7092,7 @@ basicAuth
 <td>API server which handled this request (an Eqivo extension)</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-14'>Enumerated Values</h4>
+<h4 id='enumerated-values-16'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -6985,7 +7161,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-15'>Enumerated Values</h4>
+<h4 id='enumerated-values-17'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7046,7 +7222,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-16'>Enumerated Values</h4>
+<h4 id='enumerated-values-18'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7118,7 +7294,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-17'>Enumerated Values</h4>
+<h4 id='enumerated-values-19'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7190,7 +7366,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-18'>Enumerated Values</h4>
+<h4 id='enumerated-values-20'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7262,7 +7438,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-19'>Enumerated Values</h4>
+<h4 id='enumerated-values-21'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7366,7 +7542,7 @@ basicAuth
 <td>List of established conferences</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-20'>Enumerated Values</h4>
+<h4 id='enumerated-values-22'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7445,7 +7621,7 @@ basicAuth
 <td>List of established conferences</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-21'>Enumerated Values</h4>
+<h4 id='enumerated-values-23'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7517,7 +7693,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-22'>Enumerated Values</h4>
+<h4 id='enumerated-values-24'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7578,7 +7754,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-23'>Enumerated Values</h4>
+<h4 id='enumerated-values-25'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7655,7 +7831,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-24'>Enumerated Values</h4>
+<h4 id='enumerated-values-26'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7720,7 +7896,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-25'>Enumerated Values</h4>
+<h4 id='enumerated-values-27'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7785,7 +7961,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-26'>Enumerated Values</h4>
+<h4 id='enumerated-values-28'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7865,7 +8041,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-27'>Enumerated Values</h4>
+<h4 id='enumerated-values-29'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7937,7 +8113,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-28'>Enumerated Values</h4>
+<h4 id='enumerated-values-30'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8014,7 +8190,7 @@ basicAuth
 <td>API server which handled this request (an Eqivo extension)</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-29'>Enumerated Values</h4>
+<h4 id='enumerated-values-31'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8103,7 +8279,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-30'>Enumerated Values</h4>
+<h4 id='enumerated-values-32'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8156,7 +8332,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-31'>Enumerated Values</h4>
+<h4 id='enumerated-values-33'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8217,7 +8393,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-32'>Enumerated Values</h4>
+<h4 id='enumerated-values-34'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8294,7 +8470,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-33'>Enumerated Values</h4>
+<h4 id='enumerated-values-35'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8363,7 +8539,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-34'>Enumerated Values</h4>
+<h4 id='enumerated-values-36'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8432,7 +8608,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-35'>Enumerated Values</h4>
+<h4 id='enumerated-values-37'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8505,7 +8681,7 @@ basicAuth
 <td>Unique identifier of the scheduled hangup request (UUIDv4)</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-36'>Enumerated Values</h4>
+<h4 id='enumerated-values-38'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8582,7 +8758,7 @@ basicAuth
 <td>Unique identifier of the scheduled playback request (UUIDv4)</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-37'>Enumerated Values</h4>
+<h4 id='enumerated-values-39'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8667,7 +8843,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-38'>Enumerated Values</h4>
+<h4 id='enumerated-values-40'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8736,7 +8912,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-39'>Enumerated Values</h4>
+<h4 id='enumerated-values-41'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8841,7 +9017,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-40'>Enumerated Values</h4>
+<h4 id='enumerated-values-42'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8902,7 +9078,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-41'>Enumerated Values</h4>
+<h4 id='enumerated-values-43'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8953,7 +9129,9 @@ basicAuth
   </span><span class="nl">"To"</span><span class="p">:</span><span class="w"> </span><span class="s2">"15551234567"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"ScheduledHangupId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"8f4a3488-3283-408b-bf6f-b957d5d4cf00"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"ForwardedFrom"</span><span class="p">:</span><span class="w"> </span><span class="s2">"15551239876"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"Direction"</span><span class="p">:</span><span class="w"> </span><span class="s2">"outbound"</span><span class="w">
+  </span><span class="nl">"Direction"</span><span class="p">:</span><span class="w"> </span><span class="s2">"outbound"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"MachineDetectionDuration"</span><span class="p">:</span><span class="w"> </span><span class="s2">"19"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"AnsweredBy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"human"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
 </span></code></pre></div><h3 id='properties-59'>Properties</h3>
@@ -9050,8 +9228,22 @@ basicAuth
 <td>none</td>
 <td>Call&#39;s direction</td>
 </tr>
+<tr>
+<td>MachineDetectionDuration</td>
+<td>integer</td>
+<td>false</td>
+<td>none</td>
+<td>Actual answering machine detection assessment duration (in milliseconds)</td>
+</tr>
+<tr>
+<td>AnsweredBy</td>
+<td>string</td>
+<td>false</td>
+<td>none</td>
+<td>Answering actor, when answering machine detection is enabled</td>
+</tr>
 </tbody></table>
-<h4 id='enumerated-values-42'>Enumerated Values</h4>
+<h4 id='enumerated-values-44'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -9085,6 +9277,26 @@ basicAuth
 <tr>
 <td>Direction</td>
 <td>outbound</td>
+</tr>
+<tr>
+<td>AnsweredBy</td>
+<td>machine_start</td>
+</tr>
+<tr>
+<td>AnsweredBy</td>
+<td>machine_end_beep</td>
+</tr>
+<tr>
+<td>AnsweredBy</td>
+<td>machine_end_other</td>
+</tr>
+<tr>
+<td>AnsweredBy</td>
+<td>human</td>
+</tr>
+<tr>
+<td>AnsweredBy</td>
+<td>unknown</td>
 </tr>
 </tbody></table>
 <h2 id='errors'>Errors</h2>
