@@ -542,6 +542,9 @@
                     <a href="#v0-1-conferencehangup" class="toc-h2 toc-link" data-title="/v0.1/ConferenceHangup/">/v0.1/ConferenceHangup/</a>
                   </li>
                   <li>
+                    <a href="#v0-1-conferencehold" class="toc-h2 toc-link" data-title="/v0.1/ConferenceHold/">/v0.1/ConferenceHold/</a>
+                  </li>
+                  <li>
                     <a href="#v0-1-conferencekick" class="toc-h2 toc-link" data-title="/v0.1/ConferenceKick/">/v0.1/ConferenceKick/</a>
                   </li>
                   <li>
@@ -567,6 +570,9 @@
                   </li>
                   <li>
                     <a href="#v0-1-conferenceundeaf" class="toc-h2 toc-link" data-title="/v0.1/ConferenceUndeaf/">/v0.1/ConferenceUndeaf/</a>
+                  </li>
+                  <li>
+                    <a href="#v0-1-conferenceunhold" class="toc-h2 toc-link" data-title="/v0.1/ConferenceUnhold/">/v0.1/ConferenceUnhold/</a>
                   </li>
                   <li>
                     <a href="#v0-1-conferenceunmute" class="toc-h2 toc-link" data-title="/v0.1/ConferenceUnmute/">/v0.1/ConferenceUnmute/</a>
@@ -647,7 +653,9 @@ docker run rtckit/eqivo
 <p>Container deployment is the recommended method for integrating Eqivo in your applications; ready-made OCI images are available on <a href="https://hub.docker.com/r/rtckit/eqivo">DockerHub</a>. Configuration via environment variables is ideal for this approach, and orchestration systems such as Kubernetes can transparently handle secret management on your behalf.</p>
 
 <p>For every release, there are two images available, the production one (using version tags) which contains only Eqivo and the PHP runtime and its dependencies. There is also a debug image (tagged with the <code>-full</code> suffix) which includes a complete Debian userland to facilitate troubleshooting.</p>
-<h3 id='phar-package'>Phar Package</h3><div class="highlight"><pre class="highlight sh tab-shell"><code>curl <span class="nt">-Ls</span> https://github.com/rtckit/eqivo/releases/download/v0.6.1/eqivo.phar <span class="nt">-o</span> eqivo
+<h3 id='phar-package'>Phar Package</h3>
+<p>Direct download:</p>
+<div class="highlight"><pre class="highlight sh tab-shell"><code>curl <span class="nt">-Ls</span> https://github.com/rtckit/eqivo/releases/download/v0.6.2/eqivo.phar <span class="nt">-o</span> eqivo
 <span class="nb">chmod</span> +x eqivo
 <span class="nb">sudo mv </span>eqivo /usr/local/bin
 eqivo
@@ -655,11 +663,16 @@ eqivo
 <p>The project is also available as a standalone <a href="https://github.com/rtckit/eqivo/releases">Phar package</a>, in which case the environment must be properly configured, i.e.: PHP 8.1+ as well as <a href="https://github.com/rtckit/eqivo/blob/main/composer.json#L27-L33">required extensions</a> (typically bundled with the PHP core).</p>
 
 <p>During startup, Eqivo will check if its dependencies are met and it will complain if something is wrong.</p>
-<h3 id='git-repository'>Git Repository</h3><div class="highlight"><pre class="highlight sh tab-shell"><code>git clone https://github.com/rtckit/eqivo.git
+<h3 id='phive'>PHIVE</h3>
+<p>You can also install Eqivo using <a href="https://phar.io/">PHIVE</a>:</p>
+<div class="highlight"><pre class="highlight sh tab-shell"><code>phive <span class="nb">install </span>eqivo
+</code></pre></div><h3 id='git-repository'>Git Repository</h3>
+<p>Lastly, you can clone the GitHub repository and launch Eqivo manually:</p>
+<div class="highlight"><pre class="highlight sh tab-shell"><code>git clone https://github.com/rtckit/eqivo.git
+<span class="nb">cd </span>eqivo
+composer update
 ./bin/eqivo
-</code></pre></div>
-<p>Lastly, you can clone the GitHub repository and launch Eqivo manually.</p>
-<h2 id='configuration'>Configuration</h2>
+</code></pre></div><h2 id='configuration'>Configuration</h2>
 <p>The default <a href="#configuration">configuration</a> values alone will not result in a meaningful Eqivo running instance. Furthermore, there is no boilerplate configuration template as each integrating application is unique. All options are documented in their <a href="#configuration">respective chapter</a>, however it is important to understand how Eqivo interacts with your application and FreeSWITCH so one can configure it properly.</p>
 <h3 id='eqivo-8646-freeswitch'>Eqivo &#8646; FreeSWITCH</h3>
 <p>At least one running FreeSWITCH instance (aka <a href="#cores">core</a>) must be configured, which consists of a host name, a port number, a password and an optional user name. It&#39;s important to note your network/firewall settings <em>must</em> allow Eqivo to connect to the configured host:port pair over TCP.</p>
@@ -4144,6 +4157,99 @@ curl <span class="nt">-X</span> POST /v0.1/ConferenceHangup/ <span class="se">\<
 To perform this operation, you must be authenticated by means of one of the following methods:
 basicAuth
 </aside>
+<h2 id='v0-1-conferencehold'>/v0.1/ConferenceHold/</h2>
+<blockquote>
+<p>Code samples</p>
+</blockquote>
+<div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">## You can also use wget</span>
+curl <span class="nt">-X</span> POST /v0.1/ConferenceHold/ <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s1">'Content-Type: application/x-www-form-urlencoded'</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s1">'Accept: application/json'</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s1">'Authorization: Basic {access-token}'</span>
+
+</code></pre></div>
+<p><code>POST /v0.1/ConferenceHold/</code></p>
+
+<p>Put one or more conference members on hold</p>
+
+<blockquote>
+<p>Body parameter</p>
+</blockquote>
+<div class="highlight"><pre class="highlight yaml tab-yaml"><code><span class="na">ConferenceName</span><span class="pi">:</span> <span class="s">Room402</span>
+<span class="na">FilePath</span><span class="pi">:</span> <span class="s">/var/local/media/sample.wav</span>
+<span class="na">MemberID</span><span class="pi">:</span> <span class="s">13,42</span>
+
+</code></pre></div>
+<h3 id="/v0.1/conferencehold/-parameters">Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>ConferenceName</td>
+<td>body</td>
+<td>string</td>
+<td>true</td>
+<td>Name of the conference in question</td>
+</tr>
+<tr>
+<td>FilePath</td>
+<td>body</td>
+<td>string</td>
+<td>true</td>
+<td>Path/URI of the media file to be played as music-on-hold</td>
+</tr>
+<tr>
+<td>MemberID</td>
+<td>body</td>
+<td>string</td>
+<td>true</td>
+<td>List of comma separated member IDs to be affected; <code>all</code> shorthand is available however it is not capable of playing back the music-on-hold (i.e. use specific member IDs when MOH is necessary)</td>
+</tr>
+</tbody></table>
+
+<blockquote>
+<p>Example responses</p>
+
+<p>200 Response</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"Message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Conference Hold Executed"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"Members"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"13"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"42"</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<h3 id="/v0.1/conferencehold/-responses">Responses</h3>
+
+<table><thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>200</td>
+<td><a href="https://tools.ietf.org/html/rfc7231#section-6.3.1">OK</a></td>
+<td>Response</td>
+<td><a href="#schemaconferenceholdresponse">ConferenceHoldResponse</a></td>
+</tr>
+</tbody></table>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+basicAuth
+</aside>
 <h2 id='v0-1-conferencekick'>/v0.1/ConferenceKick/</h2>
 <blockquote>
 <p>Code samples</p>
@@ -4584,14 +4690,14 @@ curl <span class="nt">-X</span> POST /v0.1/ConferencePlay/ <span class="se">\</s
 </code></pre></div>
 <p><code>POST /v0.1/ConferencePlay/</code></p>
 
-<p>Plays media to one or more conference members</p>
+<p>Plays media to one or all conference members</p>
 
 <blockquote>
 <p>Body parameter</p>
 </blockquote>
 <div class="highlight"><pre class="highlight yaml tab-yaml"><code><span class="na">ConferenceName</span><span class="pi">:</span> <span class="s">Room402</span>
 <span class="na">FilePath</span><span class="pi">:</span> <span class="s">/var/local/media/sample.wav</span>
-<span class="na">MemberID</span><span class="pi">:</span> <span class="s">13,42</span>
+<span class="na">MemberID</span><span class="pi">:</span> <span class="s2">"</span><span class="s">13"</span>
 
 </code></pre></div>
 <h3 id="/v0.1/conferenceplay/-parameters">Parameters</h3>
@@ -4624,7 +4730,7 @@ curl <span class="nt">-X</span> POST /v0.1/ConferencePlay/ <span class="se">\</s
 <td>body</td>
 <td>string</td>
 <td>true</td>
-<td>List of comma separated member IDs to be affected; <code>all</code> shorthand is available too.</td>
+<td>ID of member to play media to; <code>all</code> shorthand is available too.</td>
 </tr>
 </tbody></table>
 
@@ -4875,7 +4981,7 @@ curl <span class="nt">-X</span> POST /v0.1/ConferenceSpeak/ <span class="se">\</
 </blockquote>
 <div class="highlight"><pre class="highlight yaml tab-yaml"><code><span class="na">ConferenceName</span><span class="pi">:</span> <span class="s">Room402</span>
 <span class="na">Text</span><span class="pi">:</span> <span class="s">The quick brown fox jumps over the lazy dog</span>
-<span class="na">MemberID</span><span class="pi">:</span> <span class="s">13,42</span>
+<span class="na">MemberID</span><span class="pi">:</span> <span class="s2">"</span><span class="s">13"</span>
 
 </code></pre></div>
 <h3 id="/v0.1/conferencespeak/-parameters">Parameters</h3>
@@ -4908,7 +5014,7 @@ curl <span class="nt">-X</span> POST /v0.1/ConferenceSpeak/ <span class="se">\</
 <td>body</td>
 <td>string</td>
 <td>true</td>
-<td>List of comma separated member IDs to be affected; <code>all</code> shorthand is available too.</td>
+<td>ID of member to speak to; <code>all</code> shorthand is available too.</td>
 </tr>
 </tbody></table>
 
@@ -5022,6 +5128,91 @@ curl <span class="nt">-X</span> POST /v0.1/ConferenceUndeaf/ <span class="se">\<
 <td><a href="https://tools.ietf.org/html/rfc7231#section-6.3.1">OK</a></td>
 <td>Response</td>
 <td><a href="#schemaconferenceundeafresponse">ConferenceUndeafResponse</a></td>
+</tr>
+</tbody></table>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+basicAuth
+</aside>
+<h2 id='v0-1-conferenceunhold'>/v0.1/ConferenceUnhold/</h2>
+<blockquote>
+<p>Code samples</p>
+</blockquote>
+<div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">## You can also use wget</span>
+curl <span class="nt">-X</span> POST /v0.1/ConferenceUnhold/ <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s1">'Content-Type: application/x-www-form-urlencoded'</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s1">'Accept: application/json'</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s1">'Authorization: Basic {access-token}'</span>
+
+</code></pre></div>
+<p><code>POST /v0.1/ConferenceUnhold/</code></p>
+
+<p>Resume one or more members in the conference context</p>
+
+<blockquote>
+<p>Body parameter</p>
+</blockquote>
+<div class="highlight"><pre class="highlight yaml tab-yaml"><code><span class="na">ConferenceName</span><span class="pi">:</span> <span class="s">Room402</span>
+<span class="na">MemberID</span><span class="pi">:</span> <span class="s">13,42</span>
+
+</code></pre></div>
+<h3 id="/v0.1/conferenceunhold/-parameters">Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>ConferenceName</td>
+<td>body</td>
+<td>string</td>
+<td>true</td>
+<td>Name of the conference in question</td>
+</tr>
+<tr>
+<td>MemberID</td>
+<td>body</td>
+<td>string</td>
+<td>true</td>
+<td>List of comma separated member IDs to be affected; <code>all</code> shorthand is available too but it is not capable of stopping the music-oh-hold.</td>
+</tr>
+</tbody></table>
+
+<blockquote>
+<p>Example responses</p>
+
+<p>200 Response</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"Message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Conference Unhold Executed"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"Members"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"13"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"42"</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<h3 id="/v0.1/conferenceunhold/-responses">Responses</h3>
+
+<table><thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>200</td>
+<td><a href="https://tools.ietf.org/html/rfc7231#section-6.3.1">OK</a></td>
+<td>Response</td>
+<td><a href="#schemaconferenceunholdresponse">ConferenceUnholdResponse</a></td>
 </tr>
 </tbody></table>
 
@@ -5665,6 +5856,51 @@ basicAuth
 </tr>
 </tbody></table>
 
+<h3 id="tocS_ConferenceHoldParameters">ConferenceHoldParameters</h3>
+
+<p><a id="schemaconferenceholdparameters"></a>
+<a id="schema_ConferenceHoldParameters"></a>
+<a id="tocSconferenceholdparameters"></a>
+<a id="tocsconferenceholdparameters"></a></p>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"ConferenceName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Room402"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"FilePath"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/var/local/media/sample.wav"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"MemberID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"13,42"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre></div><h3 id='properties-7'>Properties</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Restrictions</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>ConferenceName</td>
+<td>string</td>
+<td>true</td>
+<td>none</td>
+<td>Name of the conference in question</td>
+</tr>
+<tr>
+<td>FilePath</td>
+<td>string</td>
+<td>true</td>
+<td>none</td>
+<td>Path/URI of the media file to be played as music-on-hold</td>
+</tr>
+<tr>
+<td>MemberID</td>
+<td>string</td>
+<td>true</td>
+<td>none</td>
+<td>List of comma separated member IDs to be affected; <code>all</code> shorthand is available however it is not capable of playing back the music-on-hold (i.e. use specific member IDs when MOH is necessary)</td>
+</tr>
+</tbody></table>
+
 <h3 id="tocS_ConferenceKickParameters">ConferenceKickParameters</h3>
 
 <p><a id="schemaconferencekickparameters"></a>
@@ -5676,7 +5912,7 @@ basicAuth
   </span><span class="nl">"MemberID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"13,42"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-7'>Properties</h3>
+</span></code></pre></div><h3 id='properties-8'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -5715,7 +5951,7 @@ basicAuth
   </span><span class="nl">"DeafFilter"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-8'>Properties</h3>
+</span></code></pre></div><h3 id='properties-9'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -5769,7 +6005,7 @@ basicAuth
   </span><span class="nl">"DeafFilter"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-9'>Properties</h3>
+</span></code></pre></div><h3 id='properties-10'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -5827,7 +6063,7 @@ basicAuth
   </span><span class="nl">"MemberID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"13,42"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-10'>Properties</h3>
+</span></code></pre></div><h3 id='properties-11'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -5862,10 +6098,10 @@ basicAuth
 <div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
   </span><span class="nl">"ConferenceName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Room402"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"FilePath"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/var/local/media/sample.wav"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"MemberID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"13,42"</span><span class="w">
+  </span><span class="nl">"MemberID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"13"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-11'>Properties</h3>
+</span></code></pre></div><h3 id='properties-12'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -5894,7 +6130,7 @@ basicAuth
 <td>string</td>
 <td>true</td>
 <td>none</td>
-<td>List of comma separated member IDs to be affected; <code>all</code> shorthand is available too.</td>
+<td>ID of member to play media to; <code>all</code> shorthand is available too.</td>
 </tr>
 </tbody></table>
 
@@ -5911,7 +6147,7 @@ basicAuth
   </span><span class="nl">"FileName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Room402Rec"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-12'>Properties</h3>
+</span></code></pre></div><h3 id='properties-13'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -5978,7 +6214,7 @@ basicAuth
   </span><span class="nl">"RecordFile"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/tmp/recording/sample.wav"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-13'>Properties</h3>
+</span></code></pre></div><h3 id='properties-14'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -6013,10 +6249,10 @@ basicAuth
 <div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
   </span><span class="nl">"ConferenceName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Room402"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"Text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The quick brown fox jumps over the lazy dog"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"MemberID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"13,42"</span><span class="w">
+  </span><span class="nl">"MemberID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"13"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-14'>Properties</h3>
+</span></code></pre></div><h3 id='properties-15'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -6045,7 +6281,7 @@ basicAuth
 <td>string</td>
 <td>true</td>
 <td>none</td>
-<td>List of comma separated member IDs to be affected; <code>all</code> shorthand is available too.</td>
+<td>ID of member to speak to; <code>all</code> shorthand is available too.</td>
 </tr>
 </tbody></table>
 
@@ -6060,7 +6296,7 @@ basicAuth
   </span><span class="nl">"MemberID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"13,42"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-15'>Properties</h3>
+</span></code></pre></div><h3 id='properties-16'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -6086,6 +6322,43 @@ basicAuth
 </tr>
 </tbody></table>
 
+<h3 id="tocS_ConferenceUnholdParameters">ConferenceUnholdParameters</h3>
+
+<p><a id="schemaconferenceunholdparameters"></a>
+<a id="schema_ConferenceUnholdParameters"></a>
+<a id="tocSconferenceunholdparameters"></a>
+<a id="tocsconferenceunholdparameters"></a></p>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"ConferenceName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Room402"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"MemberID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"13,42"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre></div><h3 id='properties-17'>Properties</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Restrictions</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>ConferenceName</td>
+<td>string</td>
+<td>true</td>
+<td>none</td>
+<td>Name of the conference in question</td>
+</tr>
+<tr>
+<td>MemberID</td>
+<td>string</td>
+<td>true</td>
+<td>none</td>
+<td>List of comma separated member IDs to be affected; <code>all</code> shorthand is available too but it is not capable of stopping the music-oh-hold.</td>
+</tr>
+</tbody></table>
+
 <h3 id="tocS_ConferenceUnmuteParameters">ConferenceUnmuteParameters</h3>
 
 <p><a id="schemaconferenceunmuteparameters"></a>
@@ -6097,7 +6370,7 @@ basicAuth
   </span><span class="nl">"MemberID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"13,42"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-16'>Properties</h3>
+</span></code></pre></div><h3 id='properties-18'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -6152,7 +6425,7 @@ basicAuth
   </span><span class="nl">"CoreUUID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"46ae8cd9-c28e-447d-ba40-a09cba49d474"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-17'>Properties</h3>
+</span></code></pre></div><h3 id='properties-19'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -6312,7 +6585,7 @@ basicAuth
 <a id="tocshangupallcallsparameters"></a></p>
 <div class="highlight"><pre class="highlight json tab-json"><code><span class="kc">null</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-18'>Properties</h3>
+</span></code></pre></div><h3 id='properties-20'>Properties</h3>
 <p><em>None</em></p>
 
 <h3 id="tocS_HangupCallParameters">HangupCallParameters</h3>
@@ -6326,7 +6599,7 @@ basicAuth
   </span><span class="nl">"RequestUUID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"c059b96b-04d8-414b-920c-7b373bff916e"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-19'>Properties</h3>
+</span></code></pre></div><h3 id='properties-21'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -6367,7 +6640,7 @@ basicAuth
   </span><span class="nl">"Mix"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-20'>Properties</h3>
+</span></code></pre></div><h3 id='properties-22'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -6451,7 +6724,7 @@ basicAuth
   </span><span class="nl">"CallUUID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"441afb63-85bc-49d4-9ac8-8459f9bf5e6b"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-21'>Properties</h3>
+</span></code></pre></div><h3 id='properties-23'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -6484,7 +6757,7 @@ basicAuth
   </span><span class="nl">"TimeLimit"</span><span class="p">:</span><span class="w"> </span><span class="mi">89</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-22'>Properties</h3>
+</span></code></pre></div><h3 id='properties-24'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -6558,7 +6831,7 @@ basicAuth
   </span><span class="nl">"RecordFile"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/tmp/recording/sample.wav"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-23'>Properties</h3>
+</span></code></pre></div><h3 id='properties-25'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -6595,7 +6868,7 @@ basicAuth
   </span><span class="nl">"Time"</span><span class="p">:</span><span class="w"> </span><span class="mi">59</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-24'>Properties</h3>
+</span></code></pre></div><h3 id='properties-26'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -6637,7 +6910,7 @@ basicAuth
   </span><span class="nl">"Mix"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-25'>Properties</h3>
+</span></code></pre></div><h3 id='properties-27'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -6730,7 +7003,7 @@ basicAuth
   </span><span class="nl">"Leg"</span><span class="p">:</span><span class="w"> </span><span class="s2">"both"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-26'>Properties</h3>
+</span></code></pre></div><h3 id='properties-28'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -6799,7 +7072,7 @@ basicAuth
   </span><span class="nl">"Tempo"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-27'>Properties</h3>
+</span></code></pre></div><h3 id='properties-29'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -6886,7 +7159,7 @@ basicAuth
   </span><span class="nl">"CallUUID"</span><span class="p">:</span><span class="w"> </span><span class="s2">"fe372011-face-4bc2-bbcc-893d045bf67d"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-28'>Properties</h3>
+</span></code></pre></div><h3 id='properties-30'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -6916,7 +7189,7 @@ basicAuth
   </span><span class="nl">"Url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://example.org/restxml/endpoint/"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-29'>Properties</h3>
+</span></code></pre></div><h3 id='properties-31'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -6959,7 +7232,7 @@ basicAuth
   </span><span class="nl">"RestApiServer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"localhost"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-30'>Properties</h3>
+</span></code></pre></div><h3 id='properties-32'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -7056,7 +7329,7 @@ basicAuth
   </span><span class="nl">"RestApiServer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"localhost"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-31'>Properties</h3>
+</span></code></pre></div><h3 id='properties-33'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -7139,7 +7412,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-32'>Properties</h3>
+</span></code></pre></div><h3 id='properties-34'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -7200,7 +7473,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-33'>Properties</h3>
+</span></code></pre></div><h3 id='properties-35'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -7265,7 +7538,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-34'>Properties</h3>
+</span></code></pre></div><h3 id='properties-36'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -7337,7 +7610,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-35'>Properties</h3>
+</span></code></pre></div><h3 id='properties-37'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -7394,14 +7667,14 @@ basicAuth
 </tr>
 </tbody></table>
 
-<h3 id="tocS_ConferenceKickResponse">ConferenceKickResponse</h3>
+<h3 id="tocS_ConferenceHoldResponse">ConferenceHoldResponse</h3>
 
-<p><a id="schemaconferencekickresponse"></a>
-<a id="schema_ConferenceKickResponse"></a>
-<a id="tocSconferencekickresponse"></a>
-<a id="tocsconferencekickresponse"></a></p>
+<p><a id="schemaconferenceholdresponse"></a>
+<a id="schema_ConferenceHoldResponse"></a>
+<a id="tocSconferenceholdresponse"></a>
+<a id="tocsconferenceholdresponse"></a></p>
 <div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="nl">"Message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Conference Kick Executed"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"Message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Conference Hold Executed"</span><span class="p">,</span><span class="w">
   </span><span class="nl">"Members"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
     </span><span class="s2">"13"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"42"</span><span class="w">
@@ -7409,7 +7682,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-36'>Properties</h3>
+</span></code></pre></div><h3 id='properties-38'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -7442,6 +7715,78 @@ basicAuth
 </tr>
 </tbody></table>
 <h4 id='enumerated-values-21'>Enumerated Values</h4>
+<table><thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Message</td>
+<td>Conference Hold Executed</td>
+</tr>
+<tr>
+<td>Message</td>
+<td>ConferenceName Parameter must be present</td>
+</tr>
+<tr>
+<td>Message</td>
+<td>MemberID Parameter must be present</td>
+</tr>
+<tr>
+<td>Message</td>
+<td>Conference Hold Failed -- Conference not found</td>
+</tr>
+</tbody></table>
+
+<h3 id="tocS_ConferenceKickResponse">ConferenceKickResponse</h3>
+
+<p><a id="schemaconferencekickresponse"></a>
+<a id="schema_ConferenceKickResponse"></a>
+<a id="tocSconferencekickresponse"></a>
+<a id="tocsconferencekickresponse"></a></p>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"Message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Conference Kick Executed"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"Members"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"13"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"42"</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre></div><h3 id='properties-39'>Properties</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Restrictions</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Message</td>
+<td>string</td>
+<td>true</td>
+<td>none</td>
+<td>Response message</td>
+</tr>
+<tr>
+<td>Members</td>
+<td>[string]</td>
+<td>false</td>
+<td>none</td>
+<td>List of affected members</td>
+</tr>
+<tr>
+<td>Success</td>
+<td>boolean</td>
+<td>true</td>
+<td>none</td>
+<td>Whether the request was successful or not</td>
+</tr>
+</tbody></table>
+<h4 id='enumerated-values-22'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7513,7 +7858,7 @@ basicAuth
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-37'>Properties</h3>
+</span></code></pre></div><h3 id='properties-40'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -7545,7 +7890,7 @@ basicAuth
 <td>List of established conferences</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-22'>Enumerated Values</h4>
+<h4 id='enumerated-values-23'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7592,7 +7937,7 @@ basicAuth
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-38'>Properties</h3>
+</span></code></pre></div><h3 id='properties-41'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -7624,7 +7969,7 @@ basicAuth
 <td>List of established conferences</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-23'>Enumerated Values</h4>
+<h4 id='enumerated-values-24'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7664,7 +8009,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-39'>Properties</h3>
+</span></code></pre></div><h3 id='properties-42'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -7696,7 +8041,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-24'>Enumerated Values</h4>
+<h4 id='enumerated-values-25'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7732,7 +8077,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-40'>Properties</h3>
+</span></code></pre></div><h3 id='properties-43'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -7757,7 +8102,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-25'>Enumerated Values</h4>
+<h4 id='enumerated-values-26'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7802,7 +8147,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-41'>Properties</h3>
+</span></code></pre></div><h3 id='properties-44'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -7834,7 +8179,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-26'>Enumerated Values</h4>
+<h4 id='enumerated-values-27'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7874,7 +8219,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-42'>Properties</h3>
+</span></code></pre></div><h3 id='properties-45'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -7899,7 +8244,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-27'>Enumerated Values</h4>
+<h4 id='enumerated-values-28'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -7939,7 +8284,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-43'>Properties</h3>
+</span></code></pre></div><h3 id='properties-46'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -7964,7 +8309,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-28'>Enumerated Values</h4>
+<h4 id='enumerated-values-29'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8012,79 +8357,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-44'>Properties</h3>
-<table><thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-<th>Required</th>
-<th>Restrictions</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>Message</td>
-<td>string</td>
-<td>true</td>
-<td>none</td>
-<td>Response message</td>
-</tr>
-<tr>
-<td>Members</td>
-<td>[string]</td>
-<td>false</td>
-<td>none</td>
-<td>List of affected members</td>
-</tr>
-<tr>
-<td>Success</td>
-<td>boolean</td>
-<td>true</td>
-<td>none</td>
-<td>Whether the request was successful or not</td>
-</tr>
-</tbody></table>
-<h4 id='enumerated-values-29'>Enumerated Values</h4>
-<table><thead>
-<tr>
-<th>Property</th>
-<th>Value</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>Message</td>
-<td>Conference Undeaf Executed</td>
-</tr>
-<tr>
-<td>Message</td>
-<td>ConferenceName Parameter must be present</td>
-</tr>
-<tr>
-<td>Message</td>
-<td>MemberID Parameter must be present</td>
-</tr>
-<tr>
-<td>Message</td>
-<td>Conference Undeaf Failed -- Conference not found</td>
-</tr>
-</tbody></table>
-
-<h3 id="tocS_ConferenceUnmuteResponse">ConferenceUnmuteResponse</h3>
-
-<p><a id="schemaconferenceunmuteresponse"></a>
-<a id="schema_ConferenceUnmuteResponse"></a>
-<a id="tocSconferenceunmuteresponse"></a>
-<a id="tocsconferenceunmuteresponse"></a></p>
-<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="nl">"Message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Conference Unmute Executed"</span><span class="p">,</span><span class="w">
-  </span><span class="nl">"Members"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-    </span><span class="s2">"13"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"42"</span><span class="w">
-  </span><span class="p">],</span><span class="w">
-  </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
-</span><span class="p">}</span><span class="w">
-
-</span></code></pre></div><h3 id='properties-45'>Properties</h3>
+</span></code></pre></div><h3 id='properties-47'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -8125,6 +8398,150 @@ basicAuth
 </thead><tbody>
 <tr>
 <td>Message</td>
+<td>Conference Undeaf Executed</td>
+</tr>
+<tr>
+<td>Message</td>
+<td>ConferenceName Parameter must be present</td>
+</tr>
+<tr>
+<td>Message</td>
+<td>MemberID Parameter must be present</td>
+</tr>
+<tr>
+<td>Message</td>
+<td>Conference Undeaf Failed -- Conference not found</td>
+</tr>
+</tbody></table>
+
+<h3 id="tocS_ConferenceUnholdResponse">ConferenceUnholdResponse</h3>
+
+<p><a id="schemaconferenceunholdresponse"></a>
+<a id="schema_ConferenceUnholdResponse"></a>
+<a id="tocSconferenceunholdresponse"></a>
+<a id="tocsconferenceunholdresponse"></a></p>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"Message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Conference Unhold Executed"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"Members"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"13"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"42"</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre></div><h3 id='properties-48'>Properties</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Restrictions</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Message</td>
+<td>string</td>
+<td>true</td>
+<td>none</td>
+<td>Response message</td>
+</tr>
+<tr>
+<td>Members</td>
+<td>[string]</td>
+<td>false</td>
+<td>none</td>
+<td>List of affected members</td>
+</tr>
+<tr>
+<td>Success</td>
+<td>boolean</td>
+<td>true</td>
+<td>none</td>
+<td>Whether the request was successful or not</td>
+</tr>
+</tbody></table>
+<h4 id='enumerated-values-31'>Enumerated Values</h4>
+<table><thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Message</td>
+<td>Conference Unhold Executed</td>
+</tr>
+<tr>
+<td>Message</td>
+<td>ConferenceName Parameter must be present</td>
+</tr>
+<tr>
+<td>Message</td>
+<td>MemberID Parameter must be present</td>
+</tr>
+<tr>
+<td>Message</td>
+<td>Conference Unhold Failed -- Conference not found</td>
+</tr>
+</tbody></table>
+
+<h3 id="tocS_ConferenceUnmuteResponse">ConferenceUnmuteResponse</h3>
+
+<p><a id="schemaconferenceunmuteresponse"></a>
+<a id="schema_ConferenceUnmuteResponse"></a>
+<a id="tocSconferenceunmuteresponse"></a>
+<a id="tocsconferenceunmuteresponse"></a></p>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"Message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Conference Unmute Executed"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"Members"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"13"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"42"</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre></div><h3 id='properties-49'>Properties</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Restrictions</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Message</td>
+<td>string</td>
+<td>true</td>
+<td>none</td>
+<td>Response message</td>
+</tr>
+<tr>
+<td>Members</td>
+<td>[string]</td>
+<td>false</td>
+<td>none</td>
+<td>List of affected members</td>
+</tr>
+<tr>
+<td>Success</td>
+<td>boolean</td>
+<td>true</td>
+<td>none</td>
+<td>Whether the request was successful or not</td>
+</tr>
+</tbody></table>
+<h4 id='enumerated-values-32'>Enumerated Values</h4>
+<table><thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Message</td>
 <td>Conference Unmute Executed</td>
 </tr>
 <tr>
@@ -8154,7 +8571,7 @@ basicAuth
   </span><span class="nl">"RestApiServer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"localhost"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-46'>Properties</h3>
+</span></code></pre></div><h3 id='properties-50'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -8193,7 +8610,7 @@ basicAuth
 <td>API server which handled this request (an Eqivo extension)</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-31'>Enumerated Values</h4>
+<h4 id='enumerated-values-33'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8257,7 +8674,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-47'>Properties</h3>
+</span></code></pre></div><h3 id='properties-51'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -8282,7 +8699,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-32'>Enumerated Values</h4>
+<h4 id='enumerated-values-34'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8310,7 +8727,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-48'>Properties</h3>
+</span></code></pre></div><h3 id='properties-52'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -8335,7 +8752,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-33'>Enumerated Values</h4>
+<h4 id='enumerated-values-35'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8371,7 +8788,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-49'>Properties</h3>
+</span></code></pre></div><h3 id='properties-53'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -8396,7 +8813,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-34'>Enumerated Values</h4>
+<h4 id='enumerated-values-36'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8448,7 +8865,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-50'>Properties</h3>
+</span></code></pre></div><h3 id='properties-54'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -8473,7 +8890,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-35'>Enumerated Values</h4>
+<h4 id='enumerated-values-37'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8510,7 +8927,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-51'>Properties</h3>
+</span></code></pre></div><h3 id='properties-55'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -8542,7 +8959,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-36'>Enumerated Values</h4>
+<h4 id='enumerated-values-38'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8586,7 +9003,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-52'>Properties</h3>
+</span></code></pre></div><h3 id='properties-56'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -8611,7 +9028,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-37'>Enumerated Values</h4>
+<h4 id='enumerated-values-39'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8652,7 +9069,7 @@ basicAuth
   </span><span class="nl">"SchedHangupId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"21579000-0dca-4a75-bc1f-6eae8215a611"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-53'>Properties</h3>
+</span></code></pre></div><h3 id='properties-57'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -8684,7 +9101,7 @@ basicAuth
 <td>Unique identifier of the scheduled hangup request (UUIDv4)</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-38'>Enumerated Values</h4>
+<h4 id='enumerated-values-40'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8729,7 +9146,7 @@ basicAuth
   </span><span class="nl">"SchedPlayId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b2d1da90-c364-42e4-818a-2eb90a474729"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-54'>Properties</h3>
+</span></code></pre></div><h3 id='properties-58'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -8761,7 +9178,7 @@ basicAuth
 <td>Unique identifier of the scheduled playback request (UUIDv4)</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-39'>Enumerated Values</h4>
+<h4 id='enumerated-values-41'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8821,7 +9238,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-55'>Properties</h3>
+</span></code></pre></div><h3 id='properties-59'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -8846,7 +9263,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-40'>Enumerated Values</h4>
+<h4 id='enumerated-values-42'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8890,7 +9307,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-56'>Properties</h3>
+</span></code></pre></div><h3 id='properties-60'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -8915,7 +9332,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-41'>Enumerated Values</h4>
+<h4 id='enumerated-values-43'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -8995,7 +9412,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-57'>Properties</h3>
+</span></code></pre></div><h3 id='properties-61'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -9020,7 +9437,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-42'>Enumerated Values</h4>
+<h4 id='enumerated-values-44'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -9056,7 +9473,7 @@ basicAuth
   </span><span class="nl">"Success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-58'>Properties</h3>
+</span></code></pre></div><h3 id='properties-62'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -9081,7 +9498,7 @@ basicAuth
 <td>Whether the request was successful or not</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-43'>Enumerated Values</h4>
+<h4 id='enumerated-values-45'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
@@ -9137,7 +9554,7 @@ basicAuth
   </span><span class="nl">"AnsweredBy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"human"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-59'>Properties</h3>
+</span></code></pre></div><h3 id='properties-63'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -9246,7 +9663,7 @@ basicAuth
 <td>Answering actor, when answering machine detection is enabled</td>
 </tr>
 </tbody></table>
-<h4 id='enumerated-values-44'>Enumerated Values</h4>
+<h4 id='enumerated-values-46'>Enumerated Values</h4>
 <table><thead>
 <tr>
 <th>Property</th>
